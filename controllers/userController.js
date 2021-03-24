@@ -19,17 +19,17 @@ exports.registerUser = catchAsync(async (req, res, next) => {
     })
 })
 
-exports.loginUser = catchAsync( async (req, res, next) => {
+exports.loginUser = (req, res, next) => {
     passport.authenticate("local", (err, user, info) => {
-        if(err) throw err
+        if(err) next(new AppError(("Here is a problem with signing user", 400)))
         console.log(user, "userData")
         if(!user) res.send("No user exist")
         else {
             req.logIn(user, err => {
-                if (err) throw err;
+                if (err) next(new AppError(("Here is a problem with signing and adding session to user", 400)));
                 res.send("Successfully Authonticated")
                 console.log(req.user, "user success");
             })
         }
     })(req, res, next)
-})
+}
